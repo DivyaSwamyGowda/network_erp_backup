@@ -1,0 +1,376 @@
+// Datasource and Generator
+/**
+ * datasource db {
+ * provider = "postgresql"
+ * url      = env("DATABASE_URL")
+ * }
+ */
+datasource db {
+  provider = "postgresql"
+  url      = "postgresql://npcbadmin:123Digital@localhost:5432/nbpcv1?schema=public"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// User Model
+model User {
+  id                   String     @id @default(cuid())
+  email                String     @unique
+  mobile               String     @unique
+  username             String     @unique
+  fullname             String
+  password             String
+  userType             UserType   @default(ADMIN) // ADMIN, EMPLOYEE, CUSTOMER
+  employeeId           String?
+  customerId           String?
+  isActive             Boolean    @default(true)
+  passwordResetToken   String?
+  passwordResetExpires DateTime?
+  refreshToken         String?
+  createdAt            DateTime   @default(now())
+  updatedAt            DateTime   @updatedAt
+  deletedAt            DateTime?
+  createdBy            String?
+  updatedBy            String?
+  employee             Employee?
+  customer             Customer?  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  roleId               String
+  auditLogs            AuditLog[]
+  role                 Role       @relation(fields: [roleId], references: [id])
+
+  services Service[]
+}
+
+enum UserType {
+  ADMIN
+  EMPLOYEE
+  CUSTOMER
+}
+
+
+// Employee Model
+model Employee {
+  id             String        @id @default(cuid())
+  firstName      String
+  lastName       String
+  email          String        @unique
+  designationId  String
+  userId         String        @unique
+  isActive       Boolean       @default(true)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  deletedAt      DateTime?
+  createdBy      String?
+  updatedBy      String?
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  designation    Designation   @relation(fields: [designationId], references: [id], onDelete: Restrict)
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  organizationId String?
+}
+
+// Designation Model
+model Designation {
+  id             String       @id @default(cuid())
+  name           String       @unique // Designation name (e.g., Manager, Engineer)
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  isActive       Boolean      @default(true) // Whether the designation is active
+  employees      Employee[] // Employees assigned to this designation
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  deletedAt      DateTime?
+  createdBy      String?
+  updatedBy      String?
+}
+
+// Organization Model
+model Organization {
+  id           String        @id @default(cuid())
+  name         String        @unique
+  address      String?
+  taxDetails   String?
+  contact      String?
+  settings     Json?
+  roles        Role[]
+  designations Designation[]
+
+  employees Employee[]
+  isActive  Boolean    @default(true)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  deletedAt DateTime?
+  createdBy String?
+  updatedBy String?
+}
+
+// Service Model
+model Service {
+  id             String          @id @default(cuid())
+  name           String          @unique
+  description    String?
+  isActive       Boolean         @default(true)
+  specifications Specification[] // List of specifications linked to this service
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  deletedAt      DateTime?
+  createdBy      User?           @relation(fields: [userId], references: [id])
+  userId         String?
+  rfqs           Rfq[]
+}
+
+// RFQ Model
+model Rfq {
+  id                String             @id @default(cuid())
+  name              String // RFQ creator's name
+  customerId        String? // Reference to Customer
+  customer          Customer?          @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  createdAt         DateTime           @default(now())
+  projectName       String?
+  company           String?
+  mobile            String?
+  email             String
+  address           String?
+  description       String?
+  quantity          String?
+  updatedAt         DateTime           @updatedAt
+  deletedAt         DateTime?          // Optional timestamp for soft deletion
+  createdBy         String? // User who created the RFQ
+  status            RfqStatus          @default(CREATED)
+  rfqSpecifications RfqSpecification[]
+  files             File[] // Files associated with the RFQ
+  services          Service[] // Services linked to the RFQ
+  notification  Notification[]
+  isArchived        Boolean            @default(false)
+}
+
+enum RfqStatus {
+  CREATED
+  PENDING
+  APPROVED
+  PROGRESS
+  QUOTED
+  REJECTED
+  DELETED
+}
+
+// Enums
+enum Type {
+  TEXT
+  CHECKBOX
+  DROPDOWN
+}
+
+// RFQ Specification Model
+model RfqSpecification {
+  id              String        @id @default(cuid())
+  value           String // User-provided value (e.g., FR4, 1.6mm)
+  rfq             Rfq           @relation(fields: [rfqId], references: [id], onDelete: Cascade)
+  rfqId           String
+  specification   Specification @relation(fields: [specificationId], references: [id],onDelete: Cascade)
+  specificationId String
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  Allowedunits   Unit[]             // ✅ Store unit directly
+}
+
+
+model SpecificationGroup {
+  id                String          @id @default(cuid())
+  name              String          @unique
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  specifications    Specification[]
+}
+
+
+enum Unit {
+MM
+CM
+INCH
+}
+
+// Specification Model
+model Specification {
+  id                String             @id @default(cuid())
+  name              String             @unique
+  slug              String             @unique
+  type              Type               @default(TEXT) // Value type: TEXT, NUMBER, BOOLEAN
+  isRequired        Boolean            @default(false) // Marks the specification as required
+  isActive          Boolean            @default(true) // Enables/disables the specification
+  serviceId         String?
+  service           Service?           @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  suggestions       String[] // Associated allowed values for MULTIPLE type
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  isDeleted         Boolean            @default(false)
+  rfqSpecifications RfqSpecification[]
+  defaultUnit       Unit?                   
+  allowedUnits      Unit[]            @default([])     
+  priority          Int?               @default(0) 
+  allowCustom       Boolean?               @default(true) 
+  hasDimension      Boolean ?           @default(false) 
+  specificationGroupId String?         // ✅ Optional Group ID
+  specificationGroup   SpecificationGroup? @relation(fields: [specificationGroupId], references: [id], onDelete: SetNull)
+ 
+ hasSubSpecification Boolean? @default(false)
+
+  // ✅ Self-Referencing Relation: Allows parent-child specifications
+  parentId        String?          // 👈 This is important for sub-specs
+  parent          Specification?   @relation("SubSpecs", fields: [parentId], references: [id])
+  subSpecifications Specification[] @relation("SubSpecs")
+}
+
+
+model File {
+  id           String   @id @default(cuid())
+  filename     String // Original file name
+  path         String? // Path to the file (local or S3 URL)
+  storageType  String   @default("local") // Storage type: local or S3
+  modelType    String // e.g., "RFQ", "Quote", "Order"
+  modelId      String? // ID of the related entity (should reference RFQ ID in your case)
+  version      Int      @default(1) // File version
+  isActive     Boolean  @default(true) // Marks the latest version
+  metadata     Json? // Additional metadata (tags, notes)
+  originalname String? // This field should exist
+  mimetype     String?
+  size         Int?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  rfq          Rfq?     @relation(fields: [modelId], references: [id], onDelete: Cascade)
+}
+
+// Role Model
+model Role {
+  id             String           @id @default(cuid())
+  name           String           @unique
+  description    String?
+  permissions    RolePermission[]
+  organizationId String
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  isActive       Boolean          @default(true)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  deletedAt      DateTime?
+  createdBy      String?
+  updatedBy      String?
+  users          User[]
+}
+
+// Permission Model
+model Permission {
+  id          String           @id @default(cuid())
+  name        String           @unique
+  description String?
+  metadata    Json?
+  isActive    Boolean          @default(true)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  deletedAt   DateTime?
+  createdBy   String?
+  updatedBy   String?
+  roles       RolePermission[]
+}
+
+// RolePermission Model
+model RolePermission {
+  id           String     @id @default(cuid())
+  roleId       String
+  permissionId String
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @default(now())
+}
+
+// Audit Logs
+model AuditLog {
+  id              String   @id @default(cuid())
+  userId          String?
+  action          String
+  entity          String?
+  entityId        String?
+  details         Json? // Additional details about the action
+  type            String // 'USER' or 'SERVER'
+  timestamp       DateTime @default(now())
+  ipAddress       String?
+  userAgent       String?
+  statusCode      Int?
+  user            User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  requestPayload  Json?
+  responsePayload Json?
+  errorMessage    String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Contact {
+  id        String   @id @default(uuid()) // Unique ID
+  name      String // User's name
+  email     String // User's email
+  message   String // User's message
+  createdAt DateTime @default(now()) // Timestamp
+  company    String?
+  mobile    String?  // User's mobile number (optional)
+  deletedAt   DateTime?
+  isDeleted Boolean @default(false)
+  customerId String?  // Foreign key (nullable in case contact is independent)
+  customer   Customer? @relation(fields: [customerId], references: [id], onDelete: Cascade)
+   notifications Notification[]
+}
+
+
+
+// Customer Model
+model Customer {
+  id        String    @id @default(cuid())
+  name      String // Customer name
+  email     String    @unique
+  mobile     String?
+  address   String? // Customer address
+  company    String?
+   newsletter Boolean? @default(false)  
+  isActive  Boolean   @default(true)
+  rfqs      Rfq[] // List of RFQs associated with the customer
+  users     User[] // Users linked to this customer
+  contacts  Contact[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  createdBy String?
+  updatedBy String?
+  notification  Notification[]
+}
+
+
+model Notification {
+  id          String   @id @default(uuid())
+  type        String   // "RFQ" or "MESSAGE"
+  rfqId       String?  // Nullable for messages
+  contactId   String?  // Nullable for RFQs
+   user        String   // Store the user name from RFQ or Message
+  message     String?
+  isRead      Boolean  @default(false)
+createdAt   DateTime @default(now())
+customerId  String?
+ rfq         Rfq? @relation(fields: [rfqId], references: [id], onDelete: Cascade) // Fix: Added RFQ relation
+ contact    Contact? @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+ customer    Customer? @relation(fields: [customerId], references: [id])
+  // ✅ New fields to track counts
+  rfqCount    Int      @default(0)
+  messageCount Int     @default(0)
+
+}
+
+
+model EmailRecipient {
+  id           Int      @id @default(autoincrement())
+  rfqEmail     String?
+  quoteEmail   String?
+  messageEmail String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+

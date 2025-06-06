@@ -1,0 +1,447 @@
+
+//- doctype html
+//- html(lang="en")
+//-   head
+//-     meta(charset="UTF-8")
+//-     meta(name="viewport", content="width=device-width, initial-scale=1.0")
+//-     title New RFQ Submission - NetworkPCB
+//-     style.
+//-       body {
+//-         margin: 0;
+//-         padding: 0;
+//-         background-color: #f5f9f6;
+//-         font-family: Arial, sans-serif;
+//-         font-size: 15px;
+//-         color: #333;
+//-       }
+//-       .container {
+//-         max-width: 650px;
+//-         margin: 30px auto;
+//-         background-color: #ffffff;
+//-         border-radius: 8px;
+//-         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+//-         overflow: hidden;
+//-       }
+//-       .header {
+//-         background-color: #e9f5ee;
+//-         padding: 24px;
+//-         text-align: center;
+//-         border-bottom: 3px solid #1a6f37;
+//-       }
+//-       .header img {
+//-         max-width: 180px;
+//-       }
+//-       .content {
+//-         padding: 30px;
+//-       }
+//-       .content h1 {
+//-         color: #1a6f37;
+//-         font-size: 20px;
+//-         margin-bottom: 16px;
+//-         text-align: center;
+//-       }
+//-       .content h2 {
+//-         font-size: 17px;
+//-         margin-top: 25px;
+//-         margin-bottom: 12px;
+//-         color: #1a6f37;
+//-       }
+//-       .content p {
+//-         font-size: 14px;
+//-         color: #555;
+//-         text-align: center;
+//-         margin-bottom: 14px;
+//-       }
+//-       .card {
+//-         background-color: #f8faf9;
+//-         padding: 20px;
+//-         border-radius: 8px;
+//-         margin-bottom: 20px;
+//-         box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+//-       }
+//-       .data-row {
+//-         display: flex;
+//-         margin-bottom: 10px;
+//-         flex-wrap: wrap;
+//-       }
+//-       .data-label {
+//-         width: 140px;
+//-         font-weight: bold;
+//-         color: #1a6f37;
+//-         flex-shrink: 0;
+//-       }
+//-       .data-value {
+//-         flex: 1;
+//-         color: #333;
+//-       }
+//-       ul.services-list {
+//-         list-style: none;
+//-         padding-left: 0;
+//-       }
+//-       ul.services-list li::before {
+//-         content: "•";
+//-         color: #1a6f37;
+//-         font-weight: bold;
+//-         display: inline-block;
+//-         width: 1em;
+//-         margin-left: -1em;
+//-       }
+//-       .file-row {
+//-         margin-bottom: 10px;
+//-       }
+//-       .file-label {
+//-         font-weight: bold;
+//-         color: #1a6f37;
+//-         display: inline-block;
+//-         max-width: 70%;
+//-         overflow: hidden;
+//-         text-overflow: ellipsis;
+//-         white-space: nowrap;
+//-       }
+//-       .file-link {
+//-         color: #1a6f37;
+//-         margin-left: 10px;
+//-         text-decoration: none;
+//-         font-size: 14px;
+//-       }
+//-       .file-link:hover {
+//-         text-decoration: underline;
+//-       }
+//-       table.rfq-details {
+//-         width: 100%;
+//-         border-collapse: collapse;
+//-         font-size: 14px;
+//-         margin-top: 10px;
+//-       }
+//-       table.rfq-details th, table.rfq-details td {
+//-         padding: 12px 15px;
+//-         border: 1px solid #d4d9de;
+//-       }
+//-       table.rfq-details th {
+//-         background-color: #1a6f37;
+//-         color: white;
+//-         text-align: left;
+//-       }
+//-       table.rfq-details tr:nth-child(even) td {
+//-         background-color: #f0f7f3;
+//-       }
+//-       .footer {
+//-         background-color: #f0f7f3;
+//-         padding: 20px;
+//-         text-align: center;
+//-         font-size: 13px;
+//-         color: #777;
+//-         border-top: 1px solid #dce9e1;
+//-       }
+
+//-   body
+//-     .container
+//-       .header
+//-         img(src="https://staging.networkpcb.com/_next/image?url=%2Fnpcb_logo.png&w=256&q=75" alt="NetworkPCB Logo")
+//-       .content
+//-         h1 New RFQ Submission Received!
+//-         p A new RFQ has been submitted with the following details:
+
+//-         .card
+//-           .data-row
+//-             span.data-label ID:
+//-             span.data-value #{id}
+//-           .data-row
+//-             span.data-label Name:
+//-             span.data-value #{name}
+//-           .data-row
+//-             span.data-label Company:
+//-             span.data-value #{company}
+//-           .data-row
+//-             span.data-label Quantity:
+//-             span.data-value #{quantity}
+//-           .data-row
+//-             span.data-label Mobile:
+//-             span.data-value #{mobile}
+//-           .data-row
+//-             span.data-label Email:
+//-             span.data-value #{email}
+//-           .data-row
+//-             span.data-label Project Name:
+//-             span.data-value #{projectName}
+//-           .data-row
+//-             span.data-label Address:
+//-             span.data-value #{address}
+//-           .data-row
+//-             span.data-label Description:
+//-             span.data-value #{description}
+//-           .data-row
+//-             span.data-label Created At:
+//-             span.data-value #{createdAt}
+
+//-         h2 Services Requested
+//-         .card
+//-           if services && services.length
+//-             ul.services-list
+//-               each service in services
+//-                 li #{service.name}
+//-           else
+//-             p No services provided
+
+//-         h2 RFQ Specifications
+//-         .card
+//-           table.rfq-details
+//-             thead
+//-               tr
+//-                 th Specification Name
+//-                 th Value
+//-             tbody
+//-               if rfqSpecifications && rfqSpecifications.length
+//-                 each spec in rfqSpecifications
+//-                   tr
+//-                     td #{spec.specification.name}
+//-                     td #{spec.value}
+//-               else
+//-                 tr
+//-                   td(colspan="2") No specifications provided
+
+//-         h2 Attached Files
+//-         .card
+//-           if attachments && attachments.length
+//-             each file in attachments
+//-               .file-row
+//-                 span.file-label(title=file.filename) #{file.filename}
+//-                 // no download link needed here because it's attached
+//-           else if downloadUrls && downloadUrls.length
+//-             each file in downloadUrls
+//-               .file-row
+//-                 span.file-label(title=file.name) #{file.name}
+//-                 a.file-link(href=file.url target="_blank" rel="noopener noreferrer") Download
+//-           else
+//-             p No files attached
+
+//-       .footer
+//-         p Please review the RFQ at your earliest convenience.
+//-         p &copy; 2025 NetworkPCB. All rights reserved.
+
+
+
+
+
+
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title New RFQ Submission - NetworkPCB
+    style.
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #f5f9f6;
+        font-family: Arial, sans-serif;
+        font-size: 15px;
+        color: #333;
+      }
+      .container {
+        max-width: 650px;
+        margin: 30px auto;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+      }
+      .header {
+        background-color: #e9f5ee;
+        padding: 24px;
+        text-align: center;
+        border-bottom: 3px solid #1a6f37;
+      }
+      .header img {
+        max-width: 180px;
+      }
+      .content {
+        padding: 30px;
+      }
+      .content h1 {
+        color: #1a6f37;
+        font-size: 20px;
+        margin-bottom: 16px;
+        text-align: center;
+      }
+      .content h2 {
+        font-size: 17px;
+        margin-top: 25px;
+        margin-bottom: 12px;
+        color: #1a6f37;
+      }
+      .content p {
+        font-size: 14px;
+        color: #555;
+        text-align: center;
+        margin-bottom: 14px;
+      }
+      .card {
+        background-color: #f8faf9;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+      }
+      .data-row {
+        display: flex;
+        margin-bottom: 10px;
+        flex-wrap: wrap;
+      }
+      .data-label {
+        width: 140px;
+        font-weight: bold;
+        color: #1a6f37;
+        flex-shrink: 0;
+      }
+      .data-value {
+        flex: 1;
+        color: #333;
+      }
+      ul.services-list {
+        list-style: none;
+        padding-left: 0;
+      }
+      ul.services-list li::before {
+        content: "•";
+        color: #1a6f37;
+        font-weight: bold;
+        display: inline-block;
+        width: 1em;
+        margin-left: -1em;
+      }
+      .file-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        flex-wrap: wrap;
+      }
+      .file-label {
+        font-weight: bold;
+        color: #1a6f37;
+        max-width: 75%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        flex: 1;
+      }
+      .file-link {
+        color: #1a6f37;
+        font-size: 14px;
+        text-decoration: underline;
+        margin-left: 10px;
+        flex-shrink: 0;
+      }
+      table.rfq-details {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+        margin-top: 10px;
+      }
+      table.rfq-details th, table.rfq-details td {
+        padding: 12px 15px;
+        border: 1px solid #d4d9de;
+      }
+      table.rfq-details th {
+        background-color: #1a6f37;
+        color: white;
+        text-align: left;
+      }
+      table.rfq-details tr:nth-child(even) td {
+        background-color: #f0f7f3;
+      }
+      .footer {
+        background-color: #f0f7f3;
+        padding: 20px;
+        text-align: center;
+        font-size: 13px;
+        color: #777;
+        border-top: 1px solid #dce9e1;
+      }
+
+  body
+    .container
+      .header
+        img(src="https://staging.networkpcb.com/_next/image?url=%2Fnpcb_logo.png&w=256&q=75" alt="NetworkPCB Logo")
+      .content
+        h1 New RFQ Submission Received!
+        p A new RFQ has been submitted with the following details:
+
+        .card
+          .data-row
+            span.data-label ID:
+            span.data-value #{id}
+          .data-row
+            span.data-label Name:
+            span.data-value #{name}
+          .data-row
+            span.data-label Company:
+            span.data-value #{company}
+          .data-row
+            span.data-label Quantity:
+            span.data-value #{quantity}
+          .data-row
+            span.data-label Mobile:
+            span.data-value #{mobile}
+          .data-row
+            span.data-label Email:
+            span.data-value #{email}
+          .data-row
+            span.data-label Project Name:
+            span.data-value #{projectName}
+          .data-row
+            span.data-label Address:
+            span.data-value #{address}
+          .data-row
+            span.data-label Description:
+            span.data-value #{description}
+          .data-row
+            span.data-label Created At:
+            span.data-value #{createdAt}
+
+        h2 Services Requested
+        .card
+          if services && services.length
+            ul.services-list
+              each service in services
+                li #{service.name}
+          else
+            p No services provided
+
+        h2 RFQ Specifications
+        .card
+          table.rfq-details
+            thead
+              tr
+                th Specification Name
+                th Value
+            tbody
+              if rfqSpecifications && rfqSpecifications.length
+                each spec in rfqSpecifications
+                  tr
+                    td #{spec.specification.name}
+                    td #{spec.value}
+              else
+                tr
+                  td(colspan="2") No specifications provided
+
+        h2 Attached Files
+        .card
+          if attachments && attachments.length
+            each file in attachments
+              .file-row
+                span.file-label(title=file.filename) #{file.filename}
+                // no download link needed here because it's attached
+          else if downloadUrls && downloadUrls.length
+            each file in downloadUrls
+              .file-row
+                span.file-label(title=file.name) #{file.name}
+                a.file-link(href=file.url target="_blank" rel="noopener noreferrer") Download
+          else
+            p No files attached
+
+      .footer
+        p Please review the RFQ at your earliest convenience.
+        p &copy; 2025 NetworkPCB. All rights reserved.

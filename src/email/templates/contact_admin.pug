@@ -1,0 +1,56 @@
+
+
+//new-2
+
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title Contact Us - Admin
+  body(style="margin: 0; padding: 0; background-color: #f4f6f8; font-family: 'Arial', sans-serif;")
+    table(width="100%", cellpadding="0", cellspacing="0", border="0", style="max-width: 600px; margin: 30px auto; background-color: #ffffff; border-radius: 10px; border: 1px solid #dbe3dd; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); font-size: 16px; line-height: 1.6;")
+      
+      //- Header
+      tr(style="background-color: #e6f2ec;")
+        td(style="padding: 25px; text-align: center; border-top-left-radius: 10px; border-top-right-radius: 10px;")
+         img(src="https://staging.networkpcb.com/_next/image?url=%2Fnpcb_logo.png&w=256&q=75" alt="NetworkPCB Logo")
+
+      //- Title
+      tr
+        td(style="padding: 20px 25px 15px; background-color: #f0faf4; border-bottom: 1px solid #cce3d5;")
+          h1(style="color: #1a6f37; margin: 0; font-size: 22px; text-align: center;")  New Contact Form Submission
+
+      //- Info Content
+      tr
+        td(style="padding: 20px 25px; font-size: 16px; background-color: #ffffff;")
+          table(width="100%", cellpadding="0", cellspacing="0", border="0", style="font-size: 16px;")
+            tr(style="background-color: #f9f9f9;")
+              td(style="padding: 12px; border-bottom: 1px solid #eee;")
+                strong(style="color: #1a6f37;") Name:
+                span(style="color: #333; margin-left: 5px;") #{name}
+            tr
+              td(style="padding: 12px; border-bottom: 1px solid #eee;")
+                strong(style="color: #1a6f37;") Company:
+                span(style="color: #333; margin-left: 5px;") #{company}
+            tr(style="background-color: #f9f9f9;")
+              td(style="padding: 12px; border-bottom: 1px solid #eee;")
+                strong(style="color: #1a6f37;") Email:
+                a(href=`mailto:${email}`, style="color: #007b5e; text-decoration: none; margin-left: 5px;") #{email}
+            tr
+              td(style="padding: 12px; border-bottom: 1px solid #eee;")
+                strong(style="color: #1a6f37;") mobile:
+                span(style="color: #333; margin-left: 5px;") #{mobile}
+            tr(style="background-color: #f9f9f9;")
+              td(style="padding: 16px 12px 8px;")
+                strong(style="color: #1a6f37;") Message:
+            tr
+              td(style="background-color: #ffffff; padding: 18px; border-left: 4px solid #1a6f37; border-radius: 4px; line-height: 1.7; color: #333; font-size: 16px;")
+                | #{message}
+
+      //- Footer
+      tr
+        td(style="padding: 20px 25px; background-color: #f0faf4; border-top: 1px solid #dbe3dd; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;")
+          p(style="font-size: 14px; color: #666; margin: 0; text-align: center;") This message was sent via the contact form on the <strong style="color: #1a6f37;">NetworkPCB</strong> website.
+
+
